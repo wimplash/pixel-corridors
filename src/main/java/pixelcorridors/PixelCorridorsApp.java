@@ -12,40 +12,42 @@ import javax.swing.JPanel;
 
 public class PixelCorridorsApp extends JFrame {
 
-	private static final long serialVersionUID = 8539512956698343302L;
-
 	private class MazePanel extends JPanel {
 
 		private static final long serialVersionUID = -2784043459880893727L;
 
 		public void paintComponent(final Graphics g) {
 			super.paintComponent(g);
-			final Image i = RENDERER.draw(maze);
+			final Image i = getRenderer().draw(maze);
 			if (i != null) {
 				g.drawImage(i, 0, 0, this);
 			}
 		}
 	}
 
+	public static final int DEFAULT_TILE_SIZE = 32;
+
+	private static final long serialVersionUID = 8539512956698343302L;
+
 	public static void main(final String[] args) {
 		new PixelCorridorsApp();
 	}
 
-	private final Maze maze = new Maze(10, 10);
+	private SkinLoader imageLoader;
 
-	private MazeRenderer RENDERER;
+	private Maze maze;
+
+	private MazeRenderer renderer;
+
+	private int tileSize;
 
 	public PixelCorridorsApp() {
 		this(null);
 	}
 
 	public PixelCorridorsApp(final MazeRenderer renderer) {
-		if (renderer == null) {
-			RENDERER = new MazeRenderer(new SkinLoader().loadImages(), 32);
-		} else {
-			RENDERER = renderer;
-		}
-		initMaze();
+		setRenderer(renderer);
+		maze = new StaticMazeGenerator().generate();
 		setTitle("Pixel Corridors");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(300, 300);
@@ -53,20 +55,26 @@ public class PixelCorridorsApp extends JFrame {
 		show();
 	}
 
-	private void initMaze() {
-		maze.setCell(0, 0, MazeElement.SE_WALL_INSIDE);
-		for (int i = 1; i < 9; i++) {
-			maze.setCell(0, i, MazeElement.S_WALL);
+	private SkinLoader getImageLoader() {
+		if (imageLoader == null) {
+			imageLoader = new SkinLoader();
 		}
-		maze.setCell(0, 9, MazeElement.SW_WALL_INSIDE);
-		for (int i = 1; i < 9; i++) {
-			maze.setCell(i, 0, MazeElement.E_WALL);
-			maze.setCell(i, 9, MazeElement.W_WALL);
+		return imageLoader;
+	}
+
+	private MazeRenderer getRenderer() {
+		if (renderer == null) {
+			final Map<MazeElement, Image> images = getImageLoader().loadImages();
+			renderer = new MazeRenderer(images, getTileSize());
 		}
-		maze.setCell(9, 0, MazeElement.NE_WALL_INSIDE);
-		for (int i = 1; i < 9; i++) {
-			maze.setCell(9, i, MazeElement.N_WALL);
-		}
-		maze.setCell(9, 9, MazeElement.NW_WALL_INSIDE);
+		return renderer;
+	}
+
+	private int getTileSize() {
+		return tileSize == 0 ? DEFAULT_TILE_SIZE : tileSize;
+	}
+
+	private void setRenderer(final MazeRenderer renderer) {
+		this.renderer = renderer;
 	}
 }
