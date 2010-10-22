@@ -19,13 +19,13 @@ public class MazeRenderer implements ImageObserver {
 	}
 
 	public Image draw(final Maze maze) {
-		final int width = maze.getColumns() * tileSize;
-		final int height = maze.getRows() * tileSize;
+		final int width = maze.getWidth() * tileSize;
+		final int height = maze.getHeight() * tileSize;
 		final Image img = new BufferedImage(width, height,
 				BufferedImage.TYPE_INT_ARGB);
 		final Graphics g = img.getGraphics();
-		for (int i = 0; i < maze.getRows(); i++) {
-			for (int j = 0; j < maze.getColumns(); j++) {
+		for (int i = 0; i < maze.getHeight(); i++) {
+			for (int j = 0; j < maze.getWidth(); j++) {
 				final Image elImage = elements.get(maze.getCell(i, j));
 				g.drawImage(elImage, j * tileSize, i * tileSize, this);
 			}
