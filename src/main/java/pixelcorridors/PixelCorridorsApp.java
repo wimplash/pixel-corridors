@@ -2,11 +2,8 @@ package pixelcorridors;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
